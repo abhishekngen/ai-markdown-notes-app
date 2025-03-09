@@ -1,6 +1,6 @@
-"use client";
-import {Button} from "@/components/ui/button";
-import {signInWithGoogle} from "@/server/auth/auth-actions";
+'use client';
+import { Button } from '@/components/ui/button';
+import { signInWithGoogle } from '@/server/auth/auth-actions';
 
 export default function SignInWithGoogleButton() {
     return (
