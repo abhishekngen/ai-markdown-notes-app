@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {login, signup} from "@/server/auth/auth-actions";
-import SignInWithGoogleButton from "@/components/auth/google-signin";
+// import SignInWithGoogleButton from "@/components/auth/google-signin";
 import React from "react";
 
 interface LoginFormProps extends React.ComponentProps<"div"> {
@@ -72,21 +72,22 @@ export default function LoginForm({
               {props.isSignUpForm ? "Sign up": "Log in"}
             </Button>
           </div>
-          <div
-              className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-            <span className="bg-background text-muted-foreground relative z-10 px-2">
-              Or
-            </span>
-          </div>
-          <div className="grid gap-4">
-            <SignInWithGoogleButton />
-          </div>
+          {/*<div*/}
+          {/*    className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">*/}
+          {/*  <span className="bg-background text-muted-foreground relative z-10 px-2">*/}
+          {/*    Or*/}
+          {/*  </span>*/}
+          {/*</div>*/}
+          {/*TODO fix google sign-in*/}
+          {/*<div className="grid gap-4">*/}
+          {/*  <SignInWithGoogleButton />*/}
+          {/*</div>*/}
         </div>
       </form>
-      <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
-      </div>
+      {/*<div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">*/}
+      {/*  By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}*/}
+      {/*  and <a href="#">Privacy Policy</a>.*/}
+      {/*</div>*/}
     </div>
   )
 }

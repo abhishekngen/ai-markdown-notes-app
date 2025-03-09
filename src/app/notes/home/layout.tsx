@@ -1,14 +1,12 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import {NotesSidebar} from "@/components/notes/notes-sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar"
+import React from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
-        <SidebarProvider>
-            <NotesSidebar/>
-            <main className="m-2 w-9/12">
-                <SidebarTrigger />
+        <>
+            <SidebarProvider>
                 {children}
-            </main>
-        </SidebarProvider>
+            </SidebarProvider>
+        </>
     )
 }

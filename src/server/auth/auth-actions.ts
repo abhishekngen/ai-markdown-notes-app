@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/supabase-server'
+import {toast} from "react-toastify";
 
 export async function login(formData: FormData) {
     const supabase = await createClient()
@@ -18,6 +19,7 @@ export async function login(formData: FormData) {
     const { error } = await supabase.auth.signInWithPassword(data)
 
     if (error) {
+        toast("An error occurred!", {type: "error", autoClose: 3000});
         redirect('/auth-error')
     }
 
@@ -38,6 +40,7 @@ export async function signup(formData: FormData) {
     const { error } = await supabase.auth.signUp(data)
 
     if (error) {
+        toast("An error occurred!", {type: "error", autoClose: 3000});
         redirect('/auth-error')
     }
 
@@ -59,6 +62,7 @@ export async function signInWithGoogle() {
 
     if (error) {
         console.log(error);
+        toast("An error occurred!", {type: "error", autoClose: 3000});
         redirect("/auth-error");
     }
 
@@ -70,6 +74,7 @@ export async function getCurrentUser() {
     const {data, error} = await supabase.auth.getUser();
 
     if (error || !data?.user) {
+        toast("An error occurred!", {type: "error", autoClose: 3000});
         redirect('/login')
     }
 
