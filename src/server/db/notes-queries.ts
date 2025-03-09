@@ -13,7 +13,7 @@ export async function fetchNotes() {
         .from('notes')
         .select()
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        .order('last_updated_at', { ascending: false });
 
     if(error) {
         console.log(error);
