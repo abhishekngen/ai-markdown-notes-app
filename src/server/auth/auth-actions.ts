@@ -42,6 +42,8 @@ export async function signup(formData: FormData) {
     if (error) {
         toast("An error occurred!", {type: "error", autoClose: 3000});
         redirect('/auth-error')
+    } else {
+        toast("You have been sent an email for verification!", {type: "success", autoClose: 3000});
     }
 
     revalidatePath('/', 'layout')
