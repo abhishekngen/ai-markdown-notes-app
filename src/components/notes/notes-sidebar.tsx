@@ -4,8 +4,8 @@ import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
-    SidebarHeader,
-} from '@/components/ui/sidebar';
+    SidebarHeader, useSidebar,
+} from '@/components/ui/sidebar'
 
 import { Note } from '@/types/notes-types';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,7 @@ import { Message } from '@ai-sdk/react';
 import { Trash } from 'lucide-react';
 import { deleteNote } from '@/server/db/notes-queries';
 import { toast } from 'react-toastify';
+import LogoutButton from '@/components/auth/logout'
 
 interface NotesSidebarProps {
     notes: Note[] | null;
@@ -34,14 +35,18 @@ export function NotesSidebar({
     createNote,
     setMessages,
 }: NotesSidebarProps) {
+    const {
+        isMobile,
+        toggleSidebar,
+    } = useSidebar();
+
     return (
         <Sidebar>
             <SidebarHeader className="p-4">
-                <h1 className="text-2xl font-bold">Your Notes</h1>
+                <h1 className="text-2xl font-bold text-center">notes:</h1>
             </SidebarHeader>
             <SidebarContent className="px-4">
                 <Button
-                    className="w-9/12"
                     onClick={async () => {
                         await createNote('Untitled Note', '');
                         setMessages([
@@ -95,6 +100,9 @@ export function NotesSidebar({
                                               },
                                           ]);
                                       }
+                                    if(isMobile) {
+                                        toggleSidebar();
+                                    }
                                   }}
                               >
                                   <div className={`flex-1`}>
@@ -141,7 +149,9 @@ export function NotesSidebar({
                       })
                     : 'No notes found'}
             </SidebarContent>
-            <SidebarFooter />
+            <SidebarFooter className="px-4">
+                <LogoutButton />
+            </SidebarFooter>
         </Sidebar>
     );
 }

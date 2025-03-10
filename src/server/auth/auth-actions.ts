@@ -11,20 +11,16 @@ export async function login(formData: FormData) {
 
     // type-casting here for convenience
     // TODO in practice, you should validate your inputs
-    const data = {
+    const credentials = {
         email: formData.get('email') as string,
         password: formData.get('password') as string,
     };
 
-    const { error } = await supabase.auth.signInWithPassword(data);
+    const { data, error } = await supabase.auth.signInWithPassword(credentials);
 
-    if (error) {
-        toast('An error occurred!', { type: 'error', autoClose: 3000 });
-        redirect('/auth-error');
-    }
+    console.log({data, error});
 
-    revalidatePath('/', 'layout');
-    redirect('/');
+    return {data, error};
 }
 
 export async function signup(formData: FormData) {
@@ -32,20 +28,15 @@ export async function signup(formData: FormData) {
 
     // type-casting here for convenience
     // in practice, you should validate your inputs
-    const data = {
+    const credentials = {
         email: formData.get('email') as string,
         password: formData.get('password') as string,
     };
 
-    const { error } = await supabase.auth.signUp(data);
+    const { data, error } = await supabase.auth.signUp(credentials);
+    console.log({data, error});
 
-    if (error) {
-        console.log(error);
-        redirect('/auth-error');
-    }
-
-    revalidatePath('/', 'layout');
-    redirect('/');
+    return {data, error};
 }
 
 export async function signInWithGoogle() {
@@ -74,7 +65,7 @@ export async function getCurrentUser() {
     const { data, error } = await supabase.auth.getUser();
 
     if (error || !data?.user) {
-        toast('An error occurred!', { type: 'error', autoClose: 3000 });
+        // toast('An error occurred!', { type: 'error', autoClose: 3000 }); TODO toast on client somehow
         redirect('/login');
     }
 

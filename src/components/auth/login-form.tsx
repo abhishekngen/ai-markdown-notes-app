@@ -7,15 +7,38 @@ import { Label } from '@/components/ui/label';
 import { login, signup } from '@/server/auth/auth-actions';
 // import SignInWithGoogleButton from "@/components/auth/google-signin";
 import React from 'react';
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
 
 interface LoginFormProps extends React.ComponentProps<'div'> {
     isSignUpForm?: boolean;
 }
 
 export default function LoginForm({ className, ...props }: LoginFormProps) {
+    const router = useRouter();
+
     return (
         <div className={cn('flex flex-col gap-6', className)} {...props}>
-            <form action={props.isSignUpForm ? signup : login}>
+            <form action={props.isSignUpForm ? async (formData: FormData) => {
+                    const { data, error } = await signup(formData);
+                    if (error) {
+                        toast(`An error occurred: ${error.message}`, { type: 'error', autoClose: 3000 });
+                    } else if (!data.session) {
+                        toast(`You have been sent an email to verify your account.`, { type: 'success', autoClose: 3000 });
+                    } else {
+                        toast('You have been successfully logged in!', { type: 'success', autoClose: 2000 });
+                        router.push('/');
+                    }
+                }
+            : async (formData: FormData) => {
+                    const { data, error } = await login(formData);
+                    if (error) {
+                        toast(`An error occurred: ${error.message}`, { type: 'error', autoClose: 3000 });
+                    } else {
+                        toast('You have been successfully logged in!', { type: 'success', autoClose: 2000 });
+                        router.push('/');
+                    }
+                }}>
                 <div className="flex flex-col gap-6">
                     <div className="flex flex-col items-center gap-2">
                         <a

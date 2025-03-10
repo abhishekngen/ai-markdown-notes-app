@@ -80,7 +80,7 @@ export default function NotesController() {
                 createNote={createNote}
                 setMessages={setMessages}
             />
-            <main className="mt-10 w-9/12 mx-auto">
+            <main className="mt-10 sm:w-screen md:w-9/12 mx-auto">
                 <div className="flex justify-between">
                     <SidebarTrigger />
                     <Button

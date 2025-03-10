@@ -41,7 +41,7 @@ export default function NotesEditor({
     return (
         <Card className="h-[75vh] min-h-100 max-sm:p-0 max-sm:shadow-none max-sm:border-none mx-auto mt-2">
             <CardHeader className="pb-3 max-sm:px-0">
-                <CardTitle>
+                <CardTitle className="max-sm:w-[95%] max-sm:mx-auto md:text-xl">
                     {currentNote ? (
                         <Input
                             value={currentNote.note_title}
@@ -92,7 +92,7 @@ export default function NotesEditor({
                     )}
                 </CardTitle>
                 {currentNote && currentNote.last_updated_at && (
-                    <CardDescription className="mt-2">
+                    <CardDescription className="mt-2 max-sm:mx-auto">
                         Last edited:{' '}
                         {new Date(
                             currentNote.last_updated_at
@@ -102,12 +102,12 @@ export default function NotesEditor({
             </CardHeader>
             <CardContent className="h-11/12 max-sm:p-0">
                 {currentNote ? (
-                    <Tabs defaultValue="edit" className="h-full">
-                        <TabsList className="mb-2">
+                    <Tabs defaultValue="edit" className="h-full max-sm:w-screen">
+                        <TabsList className="mb-2 max-sm:mx-auto">
                             <TabsTrigger value="edit">Edit</TabsTrigger>
                             <TabsTrigger value="preview">Preview</TabsTrigger>
                         </TabsList>
-                        <TabsContent value="edit" className="h-full">
+                        <TabsContent value="edit" className="h-full max-sm:w-[95%] max-sm:mx-auto">
                             <Textarea
                                 value={currentNote.note_content}
                                 onChange={(e) => {
@@ -150,11 +150,11 @@ export default function NotesEditor({
                                     }
                                 }}
                                 placeholder="Write your markdown here..."
-                                className="h-[95%] flex-none field-sizing-fixed resize-none font-mono"
+                                className="h-[95%] flex-none field-sizing-fixed resize-none font-mono max-sm:border-none"
                             />
                         </TabsContent>
-                        <TabsContent value="preview" className="h-full">
-                            <ScrollArea className="h-[95%] border rounded-md p-4">
+                        <TabsContent value="preview" className="h-full max-sm:w-[95%] max-sm:mx-auto">
+                            <ScrollArea className="h-[95%] md:border rounded-md p-4">
                                 {currentNote.note_content ? (
                                     <ReactMarkdown>
                                         {currentNote.note_content}
@@ -168,7 +168,7 @@ export default function NotesEditor({
                         </TabsContent>
                     </Tabs>
                 ) : (
-                    <div className="flex items-center justify-center h-full border rounded-md">
+                    <div className="flex items-center justify-center h-full md:border rounded-md">
                         <div className="text-center">
                             <p className="text-muted-foreground mb-4">
                                 No note selected
