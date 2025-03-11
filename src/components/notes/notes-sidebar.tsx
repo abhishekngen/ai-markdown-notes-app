@@ -21,6 +21,7 @@ interface NotesSidebarProps {
     setNotes: React.Dispatch<React.SetStateAction<Note[] | null>>;
     currentNote: Note | null;
     setCurrentNote: React.Dispatch<React.SetStateAction<Note | null>>;
+    setOriginalNote: React.Dispatch<React.SetStateAction<Note | null>>;
     createNote: (noteTitle: string, noteContent: string) => Promise<void>;
     setMessages: (
         messages: Message[] | ((messages: Message[]) => Message[])
@@ -32,6 +33,7 @@ export function NotesSidebar({
     setNotes,
     currentNote,
     setCurrentNote,
+    setOriginalNote,
     createNote,
     setMessages,
 }: NotesSidebarProps) {
@@ -73,6 +75,7 @@ export function NotesSidebar({
                                   }`}
                                   onClick={() => {
                                       setCurrentNote(note);
+                                      setOriginalNote({ ...note });
                                       if (!note.note_content.trim()) {
                                           setMessages([
                                               {
@@ -134,6 +137,7 @@ export function NotesSidebar({
                                           );
                                           if (currentNote?.id === note.id) {
                                               setCurrentNote(null);
+                                              setOriginalNote(null);
                                           }
                                           toast('Note deleted', {
                                               type: 'success',

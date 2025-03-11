@@ -18,6 +18,7 @@ import { useChat } from '@ai-sdk/react';
 export default function NotesController() {
     const [notes, setNotes] = useState<Note[] | null>(null);
     const [currentNote, setCurrentNote] = useState<Note | null>(null);
+    const [originalNote, setOriginalNote] = useState<Note | null>(null);
     const [isAIChatOpen, setIsAIChatOpen] = useState(false);
 
     const {
@@ -40,6 +41,7 @@ export default function NotesController() {
             setNotes([createdNote]);
         }
         setCurrentNote(createdNote);
+        setOriginalNote(createdNote);
     };
 
     const saveNote = async () => {
@@ -77,6 +79,7 @@ export default function NotesController() {
                 setNotes={setNotes}
                 currentNote={currentNote}
                 setCurrentNote={setCurrentNote}
+                setOriginalNote={setOriginalNote}
                 createNote={createNote}
                 setMessages={setMessages}
             />
@@ -85,7 +88,10 @@ export default function NotesController() {
                     <SidebarTrigger />
                     <Button
                         className="mr-4 mb-1"
-                        onClick={() => setIsAIChatOpen(!isAIChatOpen)}
+                        onClick={() => {
+                            setOriginalNote(currentNote);
+                            setIsAIChatOpen(!isAIChatOpen);
+                        }}
                         disabled={!currentNote}
                     >
                         {isAIChatOpen ? (
@@ -105,6 +111,7 @@ export default function NotesController() {
                     <NotesEditor
                         currentNote={currentNote}
                         setCurrentNote={setCurrentNote}
+                        originalNote={originalNote}
                         createNote={createNote}
                         saveNote={saveNote}
                         messages={messages}
