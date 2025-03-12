@@ -7,13 +7,13 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Plus, Save } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import ReactMarkdown from 'react-markdown';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Note } from '@/types/notes-types';
 import { Message } from '@ai-sdk/react';
@@ -40,18 +40,23 @@ export default function NotesEditor({
     messages,
     setMessages,
 }: NotesEditorProps) {
-
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         const saveStateTimeout = setTimeout(() => {
-            if((currentNote?.note_title !== originalNote?.note_title || currentNote?.note_content !== originalNote?.note_content)) {
+            if (
+                currentNote?.note_title !== originalNote?.note_title ||
+                currentNote?.note_content !== originalNote?.note_content
+            ) {
                 setIsSaving(true);
             }
         }, 350);
 
         const timeout = setTimeout(async () => {
-            if((currentNote?.note_title !== originalNote?.note_title || currentNote?.note_content !== originalNote?.note_content)) {
+            if (
+                currentNote?.note_title !== originalNote?.note_title ||
+                currentNote?.note_content !== originalNote?.note_content
+            ) {
                 console.log(currentNote);
                 console.log(originalNote);
 
@@ -238,9 +243,6 @@ export default function NotesEditor({
                             <p>Saved</p>
                         )}
                     </CardDescription>
-                    {/*<Button onClick={saveNote} className="ml-auto">*/}
-                    {/*    <Save className="h-4 w-4 mr-2" /> Save Changes*/}
-                    {/*</Button>*/}
                 </CardFooter>
             )}
         </Card>

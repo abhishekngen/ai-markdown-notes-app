@@ -4,8 +4,9 @@ import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
-    SidebarHeader, useSidebar,
-} from '@/components/ui/sidebar'
+    SidebarHeader,
+    useSidebar,
+} from '@/components/ui/sidebar';
 
 import { Note } from '@/types/notes-types';
 import { Button } from '@/components/ui/button';
@@ -14,7 +15,7 @@ import { Message } from '@ai-sdk/react';
 import { Trash } from 'lucide-react';
 import { deleteNote } from '@/server/db/notes-queries';
 import { toast } from 'react-toastify';
-import LogoutButton from '@/components/auth/logout'
+import LogoutButton from '@/components/auth/logout';
 
 interface NotesSidebarProps {
     notes: Note[] | null;
@@ -37,10 +38,7 @@ export function NotesSidebar({
     createNote,
     setMessages,
 }: NotesSidebarProps) {
-    const {
-        isMobile,
-        toggleSidebar,
-    } = useSidebar();
+    const { isMobile, toggleSidebar } = useSidebar();
 
     return (
         <Sidebar>
@@ -103,9 +101,9 @@ export function NotesSidebar({
                                               },
                                           ]);
                                       }
-                                    if(isMobile) {
-                                        toggleSidebar();
-                                    }
+                                      if (isMobile) {
+                                          toggleSidebar();
+                                      }
                                   }}
                               >
                                   <div className={`flex-1`}>

@@ -1,6 +1,5 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 import { createClient } from '@/lib/supabase/supabase-server';
@@ -18,9 +17,9 @@ export async function login(formData: FormData) {
 
     const { data, error } = await supabase.auth.signInWithPassword(credentials);
 
-    console.log({data, error});
+    console.log({ data, error });
 
-    return {data, error};
+    return { data, error };
 }
 
 export async function signup(formData: FormData) {
@@ -34,9 +33,9 @@ export async function signup(formData: FormData) {
     };
 
     const { data, error } = await supabase.auth.signUp(credentials);
-    console.log({data, error});
+    console.log({ data, error });
 
-    return {data, error};
+    return { data, error };
 }
 
 export async function signInWithGoogle() {
