@@ -49,14 +49,14 @@ export default function NotesController() {
             await saveNoteInDB(
                 currentNote.id,
                 currentNote.note_title,
-                currentNote.note_content
+                currentNote.note_content,
+                currentNote.note_content_raw_text
             );
             setNotes(
                 notes.map((note) => {
                     return note.id === currentNote.id ? currentNote : note;
                 })
             );
-            toast('Note saved!', { type: 'success', autoClose: 1000 });
         }
     };
 

@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Note } from '@/types/notes-types';
 import { Message } from '@ai-sdk/react';
 import { UIMessage } from 'ai';
+import Tiptap from '@/components/notes/tiptap/tiptap'
 
 interface NotesEditorProps {
     currentNote: Note | null;
@@ -151,50 +152,51 @@ export default function NotesEditor({
                             value="edit"
                             className="h-full max-sm:w-[95%] max-sm:mx-auto"
                         >
-                            <Textarea
-                                value={currentNote.note_content}
-                                onChange={(e) => {
-                                    setCurrentNote({
-                                        ...currentNote,
-                                        note_content: e.target.value,
-                                    });
-                                    const contextToAdd = currentNote
-                                        ? `
-                                    Hey AI, below is a note written by the user. Please only answer questions about this note.
-                                    
-                                    Note Title: ${currentNote.note_title}
-                                    
-                                    Note content: 
-                                    ${e.target.value}
-                                    `
-                                        : 'Do not answer any question.';
-                                    if (messages.length > 0) {
-                                        setMessages(
-                                            messages.map((message) => {
-                                                if (message.role === 'system') {
-                                                    return {
-                                                        id: '',
-                                                        role: 'system',
-                                                        content: contextToAdd,
-                                                    };
-                                                } else {
-                                                    return message;
-                                                }
-                                            })
-                                        );
-                                    } else {
-                                        setMessages([
-                                            {
-                                                id: '',
-                                                role: 'system',
-                                                content: contextToAdd,
-                                            },
-                                        ]);
-                                    }
-                                }}
-                                placeholder="Write your markdown here..."
-                                className="h-[95%] flex-none field-sizing-fixed resize-none font-mono max-sm:border-none"
-                            />
+                            <Tiptap currentNote={currentNote} setCurrentNote={setCurrentNote} messages={messages} setMessages={setMessages} />
+                            {/*<Textarea*/}
+                            {/*    value={currentNote.note_content}*/}
+                            {/*    onChange={(e) => {*/}
+                            {/*        setCurrentNote({*/}
+                            {/*            ...currentNote,*/}
+                            {/*            note_content: e.target.value,*/}
+                            {/*        });*/}
+                            {/*        const contextToAdd = currentNote*/}
+                            {/*            ? `*/}
+                            {/*        Hey AI, below is a note written by the user. Please only answer questions about this note.*/}
+                            {/*        */}
+                            {/*        Note Title: ${currentNote.note_title}*/}
+                            {/*        */}
+                            {/*        Note content: */}
+                            {/*        ${e.target.value}*/}
+                            {/*        `*/}
+                            {/*            : 'Do not answer any question.';*/}
+                            {/*        if (messages.length > 0) {*/}
+                            {/*            setMessages(*/}
+                            {/*                messages.map((message) => {*/}
+                            {/*                    if (message.role === 'system') {*/}
+                            {/*                        return {*/}
+                            {/*                            id: '',*/}
+                            {/*                            role: 'system',*/}
+                            {/*                            content: contextToAdd,*/}
+                            {/*                        };*/}
+                            {/*                    } else {*/}
+                            {/*                        return message;*/}
+                            {/*                    }*/}
+                            {/*                })*/}
+                            {/*            );*/}
+                            {/*        } else {*/}
+                            {/*            setMessages([*/}
+                            {/*                {*/}
+                            {/*                    id: '',*/}
+                            {/*                    role: 'system',*/}
+                            {/*                    content: contextToAdd,*/}
+                            {/*                },*/}
+                            {/*            ]);*/}
+                            {/*        }*/}
+                            {/*    }}*/}
+                            {/*    placeholder="Write your markdown here..."*/}
+                            {/*    className="h-[95%] flex-none field-sizing-fixed resize-none font-mono max-sm:border-none"*/}
+                            {/*/>*/}
                         </TabsContent>
                         <TabsContent
                             value="preview"

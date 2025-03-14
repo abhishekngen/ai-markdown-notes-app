@@ -114,8 +114,8 @@ export function NotesSidebar({
                                       </h3>
                                       <p className="w-40 text-sm text-muted-foreground truncate">
                                           {note.id === currentNote?.id
-                                              ? currentNote?.note_content
-                                              : note.note_content.substring(
+                                              ? currentNote?.note_content_raw_text
+                                              : note.note_content_raw_text?.substring(
                                                     0,
                                                     60
                                                 )}
