@@ -9,7 +9,6 @@ import {
 import { NotesSidebar } from '@/components/notes/notes-sidebar';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import NotesEditor from '@/components/notes/notes-editor';
-import { toast } from 'react-toastify';
 import Chat from '@/components/ai/chat';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, BotMessageSquare } from 'lucide-react';
