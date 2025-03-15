@@ -9,6 +9,7 @@ import { login, signup } from '@/server/auth/auth-actions';
 import React from 'react';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import SignInWithGoogleButton from '@/components/auth/google-signin'
 
 interface LoginFormProps extends React.ComponentProps<'div'> {
     isSignUpForm?: boolean;
@@ -119,16 +120,16 @@ export default function LoginForm({ className, ...props }: LoginFormProps) {
                             {props.isSignUpForm ? 'Sign up' : 'Log in'}
                         </Button>
                     </div>
-                    {/*<div*/}
-                    {/*    className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">*/}
-                    {/*  <span className="bg-background text-muted-foreground relative z-10 px-2">*/}
-                    {/*    Or*/}
-                    {/*  </span>*/}
-                    {/*</div>*/}
+                    <div
+                        className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                      <span className="bg-background text-muted-foreground relative z-10 px-2">
+                        Or
+                      </span>
+                    </div>
                     {/*TODO fix google sign-in*/}
-                    {/*<div className="grid gap-4">*/}
-                    {/*  <SignInWithGoogleButton />*/}
-                    {/*</div>*/}
+                    <div className="grid gap-4">
+                      <SignInWithGoogleButton />
+                    </div>
                 </div>
             </form>
             {/*<div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">*/}
