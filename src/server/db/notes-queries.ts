@@ -23,7 +23,11 @@ export async function fetchNotes() {
     return data as Note[]; // TODO change to proper type validation
 }
 
-export async function createNote(noteTitle: string, noteContent: string, noteContentRawText?: string) {
+export async function createNote(
+    noteTitle: string,
+    noteContent: string,
+    noteContentRawText?: string
+) {
     const user = await getCurrentUser();
     const supabase = await createClient();
 
@@ -57,7 +61,11 @@ export async function updateNote(
 
     const { error } = await supabase
         .from('notes')
-        .update({ note_title: noteTitle, note_content: noteContent, note_content_raw_text: noteContentRawText ?? '' })
+        .update({
+            note_title: noteTitle,
+            note_content: noteContent,
+            note_content_raw_text: noteContentRawText ?? '',
+        })
         .eq('id', noteId)
         .select();
     if (error) {

@@ -7,17 +7,18 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Plus } from 'lucide-react';
+import { Loader2, Plus } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
-import ReactMarkdown from 'react-markdown';
 import React, { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Note } from '@/types/notes-types';
 import { Message } from '@ai-sdk/react';
 import { UIMessage } from 'ai';
-import Tiptap from '@/components/notes/tiptap/tiptap'
+import Tiptap from '@/components/notes/tiptap/tiptap';
+// @ts-expect-error html is not typed in package
+import { html as beautifyHtml } from 'js-beautify';
 
 interface NotesEditorProps {
     currentNote: Note | null;
@@ -29,6 +30,7 @@ interface NotesEditorProps {
     setMessages: (
         messages: Message[] | ((messages: Message[]) => Message[])
     ) => void;
+    isLoading: boolean;
 }
 
 export default function NotesEditor({
@@ -39,8 +41,10 @@ export default function NotesEditor({
     saveNote,
     messages,
     setMessages,
+    isLoading,
 }: NotesEditorProps) {
     const [isSaving, setIsSaving] = useState(false);
+    console.log(beautifyHtml(currentNote?.note_content ?? ''));
 
     useEffect(() => {
         const saveStateTimeout = setTimeout(() => {
@@ -145,13 +149,20 @@ export default function NotesEditor({
                     >
                         <TabsList className="mb-2 max-sm:mx-auto">
                             <TabsTrigger value="edit">Edit</TabsTrigger>
-                            <TabsTrigger value="preview">Preview</TabsTrigger>
+                            <TabsTrigger value="preview">
+                                HTML Preview
+                            </TabsTrigger>
                         </TabsList>
                         <TabsContent
                             value="edit"
                             className="h-full max-sm:w-[95%] max-sm:mx-auto"
                         >
-                            <Tiptap currentNote={currentNote} setCurrentNote={setCurrentNote} messages={messages} setMessages={setMessages} />
+                            <Tiptap
+                                currentNote={currentNote}
+                                setCurrentNote={setCurrentNote}
+                                messages={messages}
+                                setMessages={setMessages}
+                            />
                             {/*<Textarea*/}
                             {/*    value={currentNote.note_content}*/}
                             {/*    onChange={(e) => {*/}
@@ -203,9 +214,9 @@ export default function NotesEditor({
                         >
                             <ScrollArea className="h-[95%] md:border rounded-md p-4">
                                 {currentNote.note_content ? (
-                                    <ReactMarkdown>
-                                        {currentNote.note_content}
-                                    </ReactMarkdown>
+                                    <pre className="whitespace-pre-wrap break-all">
+                                        {beautifyHtml(currentNote.note_content)}
+                                    </pre>
                                 ) : (
                                     <p className="text-muted-foreground">
                                         Nothing to preview
@@ -217,17 +228,26 @@ export default function NotesEditor({
                 ) : (
                     <div className="flex items-center justify-center h-full md:border rounded-md">
                         <div className="text-center">
-                            <p className="text-muted-foreground mb-4">
-                                No note selected
-                            </p>
-                            <Button
-                                onClick={async () =>
-                                    await createNote('Untitled Note', '')
-                                }
-                            >
-                                <Plus className="h-4 w-4 mr-2" /> Create a new
-                                note
-                            </Button>
+                            {isLoading ? (
+                                <Loader2 className="animate-spin" size="3rem" />
+                            ) : (
+                                <>
+                                    <p className="text-muted-foreground mb-4">
+                                        No note selected
+                                    </p>
+                                    <Button
+                                        onClick={async () =>
+                                            await createNote(
+                                                'Untitled Note',
+                                                ''
+                                            )
+                                        }
+                                    >
+                                        <Plus className="h-4 w-4 mr-2" /> Create
+                                        a new note
+                                    </Button>
+                                </>
+                            )}
                         </div>
                     </div>
                 )}

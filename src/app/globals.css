@@ -251,7 +251,7 @@
 
     blockquote {
         /*border-left: 3px solid gray;*/
-        @apply border-l-4 border-gray-300 pl-4 italic text-gray-800;
+        @apply border-l-4 border-gray-300 pl-4 italic text-gray-400;
         margin: 0.5rem 0;
         padding-left: 1rem;
     }

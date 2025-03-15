@@ -19,6 +19,7 @@ export default function NotesController() {
     const [currentNote, setCurrentNote] = useState<Note | null>(null);
     const [originalNote, setOriginalNote] = useState<Note | null>(null);
     const [isAIChatOpen, setIsAIChatOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const {
         messages,
@@ -64,6 +65,7 @@ export default function NotesController() {
         async function loadNotes() {
             const fetchedNotes = await fetchNotes();
             setNotes(fetchedNotes);
+            setIsLoading(false);
         }
 
         loadNotes();
@@ -81,6 +83,7 @@ export default function NotesController() {
                 setOriginalNote={setOriginalNote}
                 createNote={createNote}
                 setMessages={setMessages}
+                isLoading={isLoading}
             />
             <main className="mt-10 sm:w-screen md:w-9/12 mx-auto">
                 <div className="flex justify-between">
@@ -115,6 +118,7 @@ export default function NotesController() {
                         saveNote={saveNote}
                         messages={messages}
                         setMessages={setMessages}
+                        isLoading={isLoading}
                     />
                 ) : (
                     <div className="h-[75vh] w-full mx-auto mt-2">
