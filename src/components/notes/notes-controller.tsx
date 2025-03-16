@@ -1,139 +1,70 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { Note } from '@/types/notes-types';
-import {
-    updateNote as saveNoteInDB,
-    createNote as createNoteInDB,
-    fetchNotes,
-} from '@/server/db/notes-queries';
-import { NotesSidebar } from '@/components/notes/notes-sidebar';
-import { SidebarTrigger } from '@/components/ui/sidebar';
-import NotesEditor from '@/components/notes/notes-editor';
-import Chat from '@/components/ai/chat';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, BotMessageSquare } from 'lucide-react';
-import { useChat } from '@ai-sdk/react';
+import { Note } from '@/types/notes-types'
+import { useNoteStore } from '@/store/notes-store'
+import NotesSidebar from '@/components/notes/notes-sidebar'
+import { SidebarTrigger } from '@/components/ui/sidebar'
+import NotesEditor from '@/components/notes/notes-editor'
+import React, { useEffect, useState } from 'react'
+import Chat from '@/components/ai/chat'
+import { ArrowLeft, BotMessageSquare } from 'lucide-react'
+import { Button } from '../ui/button';
+import { useChat } from '@ai-sdk/react'
+import { useChatStore } from '@/store/chat-store'
 
-export default function NotesController() {
-    const [notes, setNotes] = useState<Note[] | null>(null);
-    const [currentNote, setCurrentNote] = useState<Note | null>(null);
-    const [originalNote, setOriginalNote] = useState<Note | null>(null);
-    const [isAIChatOpen, setIsAIChatOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
+interface NotesControllerProps {
+    notes: Note[];
+}
 
-    const {
-        messages,
-        input,
-        handleInputChange,
-        handleSubmit,
-        status,
-        setMessages,
-    } = useChat({
-        api: '/api/chat',
-    });
+export default function NotesController({notes}: NotesControllerProps) {
+    const currentNote = useNoteStore(state => state.currentNote);
+    const setOriginalNote = useNoteStore(state => state.setOriginalNote);
 
-    // TODO do error handling here
-    const createNote = async (noteTitle: string, noteContent: string) => {
-        const createdNote = await createNoteInDB(noteTitle, noteContent);
-        if (notes) {
-            setNotes([createdNote, ...notes]);
-        } else {
-            setNotes([createdNote]);
-        }
-        setCurrentNote(createdNote);
-        setOriginalNote(createdNote);
-    };
-
-    const saveNote = async () => {
-        if (currentNote && notes) {
-            await saveNoteInDB(
-                currentNote.id,
-                currentNote.note_title,
-                currentNote.note_content,
-                currentNote.note_content_raw_text
-            );
-            setNotes(
-                notes.map((note) => {
-                    return note.id === currentNote.id ? currentNote : note;
-                })
-            );
-        }
-    };
-
-    // TODO Lift this into server component
     useEffect(() => {
-        async function loadNotes() {
-            const fetchedNotes = await fetchNotes();
-            setNotes(fetchedNotes);
-            setIsLoading(false);
-        }
-
-        loadNotes();
+        useNoteStore.setState({notes});
     }, []);
 
-    // TODO move AI context parsing to backend
+    const [isAIChatOpen, setIsAIChatOpen] = useState<boolean>(false);
+
+    const chat = useChat({
+        api: '/api/chat'
+    });
 
     return (
         <>
-            <NotesSidebar
-                notes={notes}
-                setNotes={setNotes}
-                currentNote={currentNote}
-                setCurrentNote={setCurrentNote}
-                setOriginalNote={setOriginalNote}
-                createNote={createNote}
-                setMessages={setMessages}
-                isLoading={isLoading}
-            />
+            <NotesSidebar />
             <main className="mt-10 sm:w-screen md:w-9/12 mx-auto">
                 <div className="flex justify-between">
                     <SidebarTrigger />
                     <Button
-                        className="mr-4 mb-1"
-                        onClick={() => {
-                            setOriginalNote(currentNote);
-                            setIsAIChatOpen(!isAIChatOpen);
-                        }}
-                        disabled={!currentNote}
+                    className="mr-4 mb-1"
+                    onClick={() => {
+                    setOriginalNote(currentNote);
+                    setIsAIChatOpen(!isAIChatOpen);
+                }}
+                    disabled={!currentNote}
                     >
-                        {isAIChatOpen ? (
-                            <>
-                                Return to Note
-                                <ArrowLeft />
-                            </>
-                        ) : (
-                            <>
-                                Chat to AI
-                                <BotMessageSquare />
-                            </>
-                        )}
-                    </Button>
+                    {isAIChatOpen ? (
+                        <>
+                            Return to Note
+                            <ArrowLeft />
+                        </>
+                    ) : (
+                        <>
+                            Chat to AI
+                            <BotMessageSquare />
+                        </>
+                    )}
+                </Button>
                 </div>
-                {!isAIChatOpen ? (
-                    <NotesEditor
-                        currentNote={currentNote}
-                        setCurrentNote={setCurrentNote}
-                        originalNote={originalNote}
-                        createNote={createNote}
-                        saveNote={saveNote}
-                        messages={messages}
-                        setMessages={setMessages}
-                        isLoading={isLoading}
-                    />
-                ) : (
-                    <div className="h-[75vh] w-full mx-auto mt-2">
-                        <Chat
-                            messages={messages}
-                            input={input}
-                            handleInputChange={handleInputChange}
-                            handleSubmit={handleSubmit}
-                            status={status}
-                        />
-                    </div>
-                )}
+                    {!isAIChatOpen ?
+                        <NotesEditor />
+                        : (
+                            <div className="h-[75vh] w-full mx-auto mt-2">
+                                <Chat {...chat} />
+                            </div>
+                        )
+                    }
             </main>
         </>
     );
 }
-// TODO Fetch notes in layout.tsx and pass notes as prop to NotesController instead of fetching in NotesController. Then have
-// NotesController either display NotesEditor or the AI chat page. Or better yet quickly figure out providers and do that jazz.

@@ -1,46 +1,24 @@
 'use client';
+import { useNoteStore } from '@/store/notes-store'
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, useSidebar } from '@/components/ui/sidebar'
+import { Button } from '@/components/ui/button'
+import { createNote as createNoteInDB, deleteNote } from '@/server/db/notes-queries'
+import { toast } from 'react-toastify'
+import { Trash } from 'lucide-react'
+import LogoutButton from '@/components/auth/logout'
+import React from 'react'
+import { useShallow } from 'zustand/react/shallow'
+import CreateNoteButton from '@/components/notes/create-note-button'
 
-import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarHeader,
-    useSidebar,
-} from '@/components/ui/sidebar';
+export default function NotesSidebar() {
+    const { notes, setNotes, currentNote, setCurrentNote, setOriginalNote } = useNoteStore(useShallow(state => ({
+            notes: state.notes,
+        setNotes: state.setNotes,
+            currentNote: state.currentNote,
+            setCurrentNote: state.setCurrentNote,
+        setOriginalNote: state.setOriginalNote,
+    })));
 
-import { Note } from '@/types/notes-types';
-import { Button } from '@/components/ui/button';
-import React from 'react';
-import { Message } from '@ai-sdk/react';
-import { Trash } from 'lucide-react';
-import { deleteNote } from '@/server/db/notes-queries';
-import { toast } from 'react-toastify';
-import LogoutButton from '@/components/auth/logout';
-import { Skeleton } from '@/components/ui/skeleton';
-
-interface NotesSidebarProps {
-    notes: Note[] | null;
-    setNotes: React.Dispatch<React.SetStateAction<Note[] | null>>;
-    currentNote: Note | null;
-    setCurrentNote: React.Dispatch<React.SetStateAction<Note | null>>;
-    setOriginalNote: React.Dispatch<React.SetStateAction<Note | null>>;
-    createNote: (noteTitle: string, noteContent: string) => Promise<void>;
-    setMessages: (
-        messages: Message[] | ((messages: Message[]) => Message[])
-    ) => void;
-    isLoading: boolean;
-}
-
-export function NotesSidebar({
-    notes,
-    setNotes,
-    currentNote,
-    setCurrentNote,
-    setOriginalNote,
-    createNote,
-    setMessages,
-    isLoading,
-}: NotesSidebarProps) {
     const { isMobile, toggleSidebar } = useSidebar();
 
     return (
@@ -49,21 +27,7 @@ export function NotesSidebar({
                 <h1 className="text-2xl font-bold text-center">notes:</h1>
             </SidebarHeader>
             <SidebarContent className="px-4">
-                <Button
-                    onClick={async () => {
-                        await createNote('Untitled Note', '');
-                        setMessages([
-                            {
-                                id: '',
-                                role: 'system',
-                                content:
-                                    'Hey AI, there is no note content available. Let the user know they need to write something first.',
-                            },
-                        ]);
-                    }}
-                >
-                    Create New Note
-                </Button>
+                <CreateNoteButton notes={notes} setNotes={setNotes} setCurrentNote={setCurrentNote} setOriginalNote={setOriginalNote} />
                 {notes ? (
                     notes.map((note) => {
                         return (
@@ -77,33 +41,6 @@ export function NotesSidebar({
                                 onClick={() => {
                                     setCurrentNote(note);
                                     setOriginalNote({ ...note });
-                                    if (!note.note_content.trim()) {
-                                        setMessages([
-                                            {
-                                                id: '',
-                                                role: 'system',
-                                                content:
-                                                    'Hey AI, there is no note content available. Let the user know they need to write something first.',
-                                            },
-                                        ]);
-                                    } else {
-                                        const contextToAdd = `
-                                    Hey AI, below is a note written by the user. Please only answer questions about this note.
-                                    
-                                    Note Title: ${note.note_title}
-                                    
-                                    Note content: 
-                                    ${note.note_content}
-                                    `;
-
-                                        setMessages([
-                                            {
-                                                id: '',
-                                                role: 'system',
-                                                content: contextToAdd,
-                                            },
-                                        ]);
-                                    }
                                     if (isMobile) {
                                         toggleSidebar();
                                     }
@@ -119,9 +56,9 @@ export function NotesSidebar({
                                         {note.id === currentNote?.id
                                             ? currentNote?.note_content_raw_text
                                             : note.note_content_raw_text?.substring(
-                                                  0,
-                                                  60
-                                              )}
+                                                0,
+                                                60
+                                            )}
                                     </p>
                                 </div>
                                 <Button
@@ -152,11 +89,6 @@ export function NotesSidebar({
                             </div>
                         );
                     })
-                ) : isLoading ? (
-                    <div className="mt-1 flex flex-col gap-1.75">
-                        <Skeleton className="p-3 h-15 rounded-md" />
-                        <Skeleton className="p-3 h-15 rounded-md" />
-                    </div>
                 ) : (
                     'No notes found'
                 )}

@@ -1,50 +1,45 @@
 'use client';
+import { useNoteStore } from '@/store/notes-store'
+import React, { useEffect, useState } from 'react'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import Tiptap from '@/components/notes/tiptap/tiptap'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Loader2, Plus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import { Loader2, Plus } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Button } from '@/components/ui/button';
-import React, { useEffect, useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Note } from '@/types/notes-types';
-import { Message } from '@ai-sdk/react';
-import { UIMessage } from 'ai';
-import Tiptap from '@/components/notes/tiptap/tiptap';
+    createNote as createNoteInDB,
+    createNote,
+    updateNote as saveNoteInDB,
+} from '@/server/db/notes-queries'
 // @ts-expect-error html is not typed in package
 import { html as beautifyHtml } from 'js-beautify';
+import { useShallow } from 'zustand/react/shallow'
+import CreateNoteButton from '@/components/notes/create-note-button'
 
-interface NotesEditorProps {
-    currentNote: Note | null;
-    setCurrentNote: React.Dispatch<React.SetStateAction<Note | null>>;
-    originalNote: Note | null;
-    createNote: (noteTitle: string, noteContent: string) => Promise<void>;
-    saveNote: () => Promise<void>;
-    messages: UIMessage[];
-    setMessages: (
-        messages: Message[] | ((messages: Message[]) => Message[])
-    ) => void;
-    isLoading: boolean;
-}
+export default function NotesEditor() {
+    const { currentNote, setCurrentNote, originalNote, setOriginalNote, notes, setNotes } = useNoteStore(useShallow((state) => ({
+        currentNote: state.currentNote,
+        setCurrentNote: state.setCurrentNote,
+        originalNote: state.originalNote,
+        setOriginalNote: state.setOriginalNote,
+        notes: state.notes,
+        setNotes: state.setNotes,
+    }))); // Use useShallow otherwise React thinks this object is a new object on every render!
 
-export default function NotesEditor({
-    currentNote,
-    setCurrentNote,
-    originalNote,
-    createNote,
-    saveNote,
-    messages,
-    setMessages,
-    isLoading,
-}: NotesEditorProps) {
+    const saveNote = async () => {
+        if(currentNote) {
+            await saveNoteInDB(
+                currentNote.id,
+                currentNote.note_title,
+                currentNote.note_content,
+                currentNote.note_content_raw_text
+            );
+        }
+    }
+
     const [isSaving, setIsSaving] = useState(false);
-    console.log(beautifyHtml(currentNote?.note_content ?? ''));
 
     useEffect(() => {
         const saveStateTimeout = setTimeout(() => {
@@ -61,9 +56,6 @@ export default function NotesEditor({
                 currentNote?.note_title !== originalNote?.note_title ||
                 currentNote?.note_content !== originalNote?.note_content
             ) {
-                console.log(currentNote);
-                console.log(originalNote);
-
                 await saveNote();
                 setIsSaving(false);
             }
@@ -91,39 +83,6 @@ export default function NotesEditor({
                                     ...currentNote,
                                     note_title: e.target.value,
                                 });
-                                const contextToAdd = currentNote
-                                    ? `
-                                Hey AI, below is a note written by the user. Please only answer questions about this note.
-                                
-                                Note Title: ${e.target.value}
-                                
-                                Note content: 
-                                ${currentNote.note_content}
-                                `
-                                    : 'Do not answer any question.';
-                                if (messages.length > 0) {
-                                    setMessages(
-                                        messages.map((message) => {
-                                            if (message.role === 'system') {
-                                                return {
-                                                    id: '',
-                                                    role: 'system',
-                                                    content: contextToAdd,
-                                                };
-                                            } else {
-                                                return message;
-                                            }
-                                        })
-                                    );
-                                } else {
-                                    setMessages([
-                                        {
-                                            id: '',
-                                            role: 'system',
-                                            content: contextToAdd,
-                                        },
-                                    ]);
-                                }
                             }}
                             className="font-bold md:text-xl"
                             placeholder="Note title"
@@ -157,56 +116,7 @@ export default function NotesEditor({
                             value="edit"
                             className="h-full max-sm:w-[95%] max-sm:mx-auto"
                         >
-                            <Tiptap
-                                currentNote={currentNote}
-                                setCurrentNote={setCurrentNote}
-                                messages={messages}
-                                setMessages={setMessages}
-                            />
-                            {/*<Textarea*/}
-                            {/*    value={currentNote.note_content}*/}
-                            {/*    onChange={(e) => {*/}
-                            {/*        setCurrentNote({*/}
-                            {/*            ...currentNote,*/}
-                            {/*            note_content: e.target.value,*/}
-                            {/*        });*/}
-                            {/*        const contextToAdd = currentNote*/}
-                            {/*            ? `*/}
-                            {/*        Hey AI, below is a note written by the user. Please only answer questions about this note.*/}
-                            {/*        */}
-                            {/*        Note Title: ${currentNote.note_title}*/}
-                            {/*        */}
-                            {/*        Note content: */}
-                            {/*        ${e.target.value}*/}
-                            {/*        `*/}
-                            {/*            : 'Do not answer any question.';*/}
-                            {/*        if (messages.length > 0) {*/}
-                            {/*            setMessages(*/}
-                            {/*                messages.map((message) => {*/}
-                            {/*                    if (message.role === 'system') {*/}
-                            {/*                        return {*/}
-                            {/*                            id: '',*/}
-                            {/*                            role: 'system',*/}
-                            {/*                            content: contextToAdd,*/}
-                            {/*                        };*/}
-                            {/*                    } else {*/}
-                            {/*                        return message;*/}
-                            {/*                    }*/}
-                            {/*                })*/}
-                            {/*            );*/}
-                            {/*        } else {*/}
-                            {/*            setMessages([*/}
-                            {/*                {*/}
-                            {/*                    id: '',*/}
-                            {/*                    role: 'system',*/}
-                            {/*                    content: contextToAdd,*/}
-                            {/*                },*/}
-                            {/*            ]);*/}
-                            {/*        }*/}
-                            {/*    }}*/}
-                            {/*    placeholder="Write your markdown here..."*/}
-                            {/*    className="h-[95%] flex-none field-sizing-fixed resize-none font-mono max-sm:border-none"*/}
-                            {/*/>*/}
+                            <Tiptap />
                         </TabsContent>
                         <TabsContent
                             value="preview"
@@ -228,24 +138,12 @@ export default function NotesEditor({
                 ) : (
                     <div className="flex items-center justify-center h-full md:border rounded-md">
                         <div className="text-center">
-                            {isLoading ? (
-                                <Loader2 className="animate-spin" size="3rem" />
-                            ) : (
+                            {(
                                 <>
                                     <p className="text-muted-foreground mb-4">
                                         No note selected
                                     </p>
-                                    <Button
-                                        onClick={async () =>
-                                            await createNote(
-                                                'Untitled Note',
-                                                ''
-                                            )
-                                        }
-                                    >
-                                        <Plus className="h-4 w-4 mr-2" /> Create
-                                        a new note
-                                    </Button>
+                                    <CreateNoteButton notes={notes} setNotes={setNotes} setCurrentNote={setCurrentNote} setOriginalNote={setOriginalNote} />
                                 </>
                             )}
                         </div>

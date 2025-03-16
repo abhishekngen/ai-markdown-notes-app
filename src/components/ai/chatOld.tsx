@@ -1,13 +1,10 @@
-import { useChatStore } from '@/store/chat-store'
-import React, { useEffect, useRef } from 'react'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Send } from 'lucide-react'
-import { useShallow } from 'zustand/react/shallow'
-import { Message, useChat } from '@ai-sdk/react'
-import { useNoteStore } from '@/store/notes-store'
-import { ChatRequestOptions, UIMessage } from 'ai'
-import { generateAIContext } from '@/lib/utils/ai-utils'
+'use client';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Send } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { ChatRequestOptions, UIMessage } from 'ai';
 
 interface ChatProps {
     messages: UIMessage[];
@@ -22,50 +19,15 @@ interface ChatProps {
         chatRequestOptions?: ChatRequestOptions
     ) => void;
     status: 'streaming' | 'submitted' | 'ready' | 'error';
-    setMessages: (messages: Message[] | ((messages: Message[]) => Message[])) => void;
 }
 
-export default function Chat({
-                                 messages,
-                                 input,
-                                 handleInputChange,
-                                 handleSubmit,
-                                 status,
-    setMessages
-                             }: ChatProps) {
-
-    const {currentNote} = useNoteStore();
-
-    const id = useRef(currentNote?.id ?? '');
-
-    useEffect(() => {
-        const contextToAdd = generateAIContext(currentNote);
-        if (messages.length > 0 && currentNote && currentNote.id === id.current) {
-            setMessages(
-                messages.map((message) => {
-                    if (message.role === 'system') {
-                        return {
-                            id: '',
-                            role: 'system',
-                            content: contextToAdd,
-                        };
-                    } else {
-                        return message;
-                    }
-                })
-            );
-        } else {
-            id.current = currentNote?.id ?? '';
-            setMessages([
-                {
-                    id: '',
-                    role: 'system',
-                    content: contextToAdd,
-                },
-            ]);
-        }
-    }, [currentNote?.note_content, currentNote?.note_title, currentNote?.id]);
-
+export default function ChatOld({
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    status,
+}: ChatProps) {
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -118,26 +80,26 @@ export default function Chat({
                         </div>
                     ))}
 
-                {status === "submitted" && (
-                    <div className="flex justify-start">
-                        <div className="max-w-[80%] p-4 rounded-lg bg-muted">
-                            <div className="flex space-x-2">
-                                <div
-                                    className="w-2 h-2 rounded-full animate-bounce bg-foreground"
-                                    style={{ animationDelay: "0ms" }}
-                                ></div>
-                                <div
-                                    className="w-2 h-2 rounded-full animate-bounce bg-foreground"
-                                    style={{ animationDelay: "150ms" }}
-                                ></div>
-                                <div
-                                    className="w-2 h-2 rounded-full animate-bounce bg-foreground"
-                                    style={{ animationDelay: "300ms" }}
-                                ></div>
-                            </div>
-                        </div>
-                    </div>
-                )}
+                {/*{status === "streaming" && (*/}
+                {/*    <div className="flex justify-start">*/}
+                {/*        <div className="max-w-[80%] p-3 rounded-lg bg-muted">*/}
+                {/*            <div className="flex space-x-2">*/}
+                {/*                <div*/}
+                {/*                    className="w-2 h-2 rounded-full animate-bounce"*/}
+                {/*                    style={{ animationDelay: "0ms" }}*/}
+                {/*                ></div>*/}
+                {/*                <div*/}
+                {/*                    className="w-2 h-2 rounded-full animate-bounce"*/}
+                {/*                    style={{ animationDelay: "150ms" }}*/}
+                {/*                ></div>*/}
+                {/*                <div*/}
+                {/*                    className="w-2 h-2 rounded-full animate-bounce"*/}
+                {/*                    style={{ animationDelay: "300ms" }}*/}
+                {/*                ></div>*/}
+                {/*            </div>*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
+                {/*)}*/}
             </div>
 
             <div className="border-t p-3">
