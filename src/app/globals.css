@@ -221,7 +221,7 @@
     h4,
     h5,
     h6 {
-        font-size: 1rem;
+        font-size: 1.05rem;
     }
 
     /* Code and preformatted text styles */
@@ -260,5 +260,9 @@
         border: none;
         border-top: 1px solid var(--gray-2);
         margin: 2rem 0;
+    }
+
+    p {
+        font-size: 1rem;
     }
 }
