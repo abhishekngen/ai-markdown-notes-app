@@ -2,27 +2,17 @@
 
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { Note } from '@/types/notes-types';
 import React from 'react';
-import { UIMessage } from 'ai';
-import { Message } from '@ai-sdk/react';
-import { useNoteStore } from '@/store/notes-store'
-import { useShallow } from 'zustand/react/shallow'
-
-interface TiptapProps {
-    currentNote: Note | null;
-    setCurrentNote: React.Dispatch<React.SetStateAction<Note | null>>;
-    messages: UIMessage[];
-    setMessages: (
-        messages: Message[] | ((messages: Message[]) => Message[])
-    ) => void;
-}
+import { useNoteStore } from '@/store/notes-store';
+import { useShallow } from 'zustand/react/shallow';
 
 const Tiptap = () => {
-    const {currentNote, setCurrentNote} = useNoteStore(useShallow((state) => ({
-        currentNote: state.currentNote,
-        setCurrentNote: state.setCurrentNote,
-    })));
+    const { currentNote, setCurrentNote } = useNoteStore(
+        useShallow((state) => ({
+            currentNote: state.currentNote,
+            setCurrentNote: state.setCurrentNote,
+        }))
+    );
 
     const editor = useEditor(
         {

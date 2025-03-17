@@ -1,35 +1,60 @@
 'use client';
-import { useNoteStore } from '@/store/notes-store'
-import React, { useEffect, useState } from 'react'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import Tiptap from '@/components/notes/tiptap/tiptap'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Loader2, Plus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { useNoteStore } from '@/store/notes-store';
+import React, { useEffect, useState } from 'react';
 import {
-    createNote as createNoteInDB,
-    createNote,
-    updateNote as saveNoteInDB,
-} from '@/server/db/notes-queries'
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Tiptap from '@/components/notes/tiptap/tiptap';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { updateNote as saveNoteInDB } from '@/server/db/notes-queries';
 // @ts-expect-error html is not typed in package
 import { html as beautifyHtml } from 'js-beautify';
-import { useShallow } from 'zustand/react/shallow'
-import CreateNoteButton from '@/components/notes/create-note-button'
+import { useShallow } from 'zustand/react/shallow';
+import CreateNoteButton from '@/components/notes/create-note-button';
 
 export default function NotesEditor() {
-    const { currentNote, setCurrentNote, originalNote, setOriginalNote, notes, setNotes } = useNoteStore(useShallow((state) => ({
-        currentNote: state.currentNote,
-        setCurrentNote: state.setCurrentNote,
-        originalNote: state.originalNote,
-        setOriginalNote: state.setOriginalNote,
-        notes: state.notes,
-        setNotes: state.setNotes,
-    }))); // Use useShallow otherwise React thinks this object is a new object on every render!
+    const {
+        currentNote,
+        setCurrentNote,
+        originalNote,
+        setOriginalNote,
+        notes,
+        setNotes,
+    } = useNoteStore(
+        useShallow((state) => ({
+            currentNote: state.currentNote,
+            setCurrentNote: state.setCurrentNote,
+            originalNote: state.originalNote,
+            setOriginalNote: state.setOriginalNote,
+            notes: state.notes,
+            setNotes: state.setNotes,
+        }))
+    ); // Use useShallow otherwise React thinks this object is a new object on every render!
 
     const saveNote = async () => {
-        if(currentNote) {
+        if (currentNote) {
+            setNotes(
+                notes.map((note) => {
+                    if (note.id === currentNote.id) {
+                        return {
+                            ...note,
+                            note_content: currentNote.note_content,
+                            note_content_raw_text:
+                                currentNote.note_content_raw_text,
+                        };
+                    } else {
+                        return note;
+                    }
+                })
+            );
+
             await saveNoteInDB(
                 currentNote.id,
                 currentNote.note_title,
@@ -37,7 +62,7 @@ export default function NotesEditor() {
                 currentNote.note_content_raw_text
             );
         }
-    }
+    };
 
     const [isSaving, setIsSaving] = useState(false);
 
@@ -49,7 +74,7 @@ export default function NotesEditor() {
             ) {
                 setIsSaving(true);
             }
-        }, 350);
+        }, 250); // DEBOUNCING to stop saving effect showing all the time
 
         const timeout = setTimeout(async () => {
             if (
@@ -59,13 +84,14 @@ export default function NotesEditor() {
                 await saveNote();
                 setIsSaving(false);
             }
-        }, 1000);
+        }, 300);
 
         return () => {
             clearTimeout(saveStateTimeout);
             clearTimeout(timeout);
+            setIsSaving(false);
         };
-    }, [currentNote?.note_title, currentNote?.note_content]);
+    }, [currentNote?.note_title, currentNote?.note_content, currentNote?.id]);
 
     return (
         <Card className="h-[75vh] min-h-100 max-sm:p-0 max-sm:shadow-none max-sm:border-none mx-auto mt-2">
@@ -138,14 +164,19 @@ export default function NotesEditor() {
                 ) : (
                     <div className="flex items-center justify-center h-full md:border rounded-md">
                         <div className="text-center">
-                            {(
+                            {
                                 <>
                                     <p className="text-muted-foreground mb-4">
                                         No note selected
                                     </p>
-                                    <CreateNoteButton notes={notes} setNotes={setNotes} setCurrentNote={setCurrentNote} setOriginalNote={setOriginalNote} />
+                                    <CreateNoteButton
+                                        notes={notes}
+                                        setNotes={setNotes}
+                                        setCurrentNote={setCurrentNote}
+                                        setOriginalNote={setOriginalNote}
+                                    />
                                 </>
-                            )}
+                            }
                         </div>
                     </div>
                 )}

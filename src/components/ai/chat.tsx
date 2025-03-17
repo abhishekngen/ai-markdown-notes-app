@@ -1,13 +1,11 @@
-import { useChatStore } from '@/store/chat-store'
-import React, { useEffect, useRef } from 'react'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Send } from 'lucide-react'
-import { useShallow } from 'zustand/react/shallow'
-import { Message, useChat } from '@ai-sdk/react'
-import { useNoteStore } from '@/store/notes-store'
-import { ChatRequestOptions, UIMessage } from 'ai'
-import { generateAIContext } from '@/lib/utils/ai-utils'
+import React, { useEffect, useRef } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Send } from 'lucide-react';
+import { Message } from '@ai-sdk/react';
+import { useNoteStore } from '@/store/notes-store';
+import { ChatRequestOptions, UIMessage } from 'ai';
+import { generateAIContext } from '@/lib/utils/ai-utils';
 
 interface ChatProps {
     messages: UIMessage[];
@@ -22,25 +20,28 @@ interface ChatProps {
         chatRequestOptions?: ChatRequestOptions
     ) => void;
     status: 'streaming' | 'submitted' | 'ready' | 'error';
-    setMessages: (messages: Message[] | ((messages: Message[]) => Message[])) => void;
+    setMessages: (
+        messages: Message[] | ((messages: Message[]) => Message[])
+    ) => void;
 }
 
 export default function Chat({
-                                 messages,
-                                 input,
-                                 handleInputChange,
-                                 handleSubmit,
-                                 status,
-    setMessages
-                             }: ChatProps) {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    status,
+    setMessages,
+}: ChatProps) {
+    const { currentNote } = useNoteStore();
 
-    const {currentNote} = useNoteStore();
+    // On mount, just use the current note as context. On switching note whilst leaving AI tab open, switch context and do not reset.
 
-    const id = useRef(currentNote?.id ?? '');
+    const id = useRef(currentNote?.id);
 
     useEffect(() => {
         const contextToAdd = generateAIContext(currentNote);
-        if (messages.length > 0 && currentNote && currentNote.id === id.current) {
+        if (id.current === currentNote?.id && messages?.length > 0) {
             setMessages(
                 messages.map((message) => {
                     if (message.role === 'system') {
@@ -55,7 +56,7 @@ export default function Chat({
                 })
             );
         } else {
-            id.current = currentNote?.id ?? '';
+            id.current = currentNote?.id;
             setMessages([
                 {
                     id: '',
@@ -64,7 +65,7 @@ export default function Chat({
                 },
             ]);
         }
-    }, [currentNote?.note_content, currentNote?.note_title, currentNote?.id]);
+    }, [currentNote?.id]);
 
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -118,21 +119,21 @@ export default function Chat({
                         </div>
                     ))}
 
-                {status === "submitted" && (
+                {status === 'submitted' && (
                     <div className="flex justify-start">
                         <div className="max-w-[80%] p-4 rounded-lg bg-muted">
                             <div className="flex space-x-2">
                                 <div
                                     className="w-2 h-2 rounded-full animate-bounce bg-foreground"
-                                    style={{ animationDelay: "0ms" }}
+                                    style={{ animationDelay: '0ms' }}
                                 ></div>
                                 <div
                                     className="w-2 h-2 rounded-full animate-bounce bg-foreground"
-                                    style={{ animationDelay: "150ms" }}
+                                    style={{ animationDelay: '150ms' }}
                                 ></div>
                                 <div
                                     className="w-2 h-2 rounded-full animate-bounce bg-foreground"
-                                    style={{ animationDelay: "300ms" }}
+                                    style={{ animationDelay: '300ms' }}
                                 ></div>
                             </div>
                         </div>

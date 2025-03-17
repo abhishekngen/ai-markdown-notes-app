@@ -1,7 +1,7 @@
-import { ChatRequestOptions, UIMessage } from 'ai'
-import React from 'react'
-import { create } from 'zustand'
-import { Message } from '@ai-sdk/react'
+import { ChatRequestOptions, UIMessage } from 'ai';
+import React from 'react';
+import { create } from 'zustand';
+import { Message } from '@ai-sdk/react';
 
 interface ChatState {
     messages: UIMessage[];
@@ -16,7 +16,9 @@ interface ChatState {
         chatRequestOptions?: ChatRequestOptions
     ) => void;
     status: 'streaming' | 'submitted' | 'ready' | 'error';
-    setMessages: (messages: Message[] | ((messages: Message[]) => Message[])) => void;
+    setMessages: (
+        messages: Message[] | ((messages: Message[]) => Message[])
+    ) => void;
 }
 
 export const useChatStore = create<ChatState>(() => {
@@ -26,6 +28,6 @@ export const useChatStore = create<ChatState>(() => {
         handleInputChange: () => {},
         handleSubmit: () => {},
         status: 'ready',
-        setMessages: () => {}
-    }
-})
+        setMessages: () => {},
+    };
+});

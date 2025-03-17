@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Note } from '@/types/notes-types'
+import { Note } from '@/types/notes-types';
 
 interface NotesStore {
     notes: Note[];
@@ -14,18 +14,20 @@ export const useNoteStore = create<NotesStore>((set) => ({
     notes: [],
     currentNote: null,
     originalNote: null,
-    setNotes: (notes: Note[]) => set({notes}),
+    setNotes: (notes: Note[]) => set({ notes }),
     setCurrentNote: (note: Note | null) => {
         set((state) => {
-            // const updatedNotes = note ? state.notes.map((oldNote) => {
-            //     if(oldNote.id === note.id) {
-            //         return oldNote;
-            //     } else {
-            //         return oldNote;
-            //     }
-            // }) : state.notes;
-            return {currentNote: note};
+            const updatedNotes = note
+                ? state.notes.map((oldNote) => {
+                      if (oldNote.id === note.id) {
+                          return oldNote;
+                      } else {
+                          return oldNote;
+                      }
+                  })
+                : state.notes;
+            return { currentNote: note, notes: updatedNotes };
         });
     },
-    setOriginalNote: (note: Note | null) => set({originalNote: note}),
+    setOriginalNote: (note: Note | null) => set({ originalNote: note }),
 }));
