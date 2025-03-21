@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { login, signup } from '@/server/auth/auth-actions';
 import React from 'react';
-import { toast } from "sonner"
+import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import SignInWithGoogleButton from '@/components/auth/google-signin';
 

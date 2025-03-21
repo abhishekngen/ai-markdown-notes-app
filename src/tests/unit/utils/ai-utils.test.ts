@@ -25,4 +25,3 @@ describe('ai-utils', () => {
         expect(generatedContext).contains('content');
     });
 });
-

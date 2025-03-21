@@ -3,7 +3,6 @@
 import { redirect } from 'next/navigation';
 
 import { createClient } from '@/lib/supabase/supabase-server';
-import { toast } from 'react-toastify';
 
 export async function login(formData: FormData) {
     const supabase = await createClient();
@@ -16,8 +15,6 @@ export async function login(formData: FormData) {
     };
 
     const { data, error } = await supabase.auth.signInWithPassword(credentials);
-
-    console.log({ data, error });
 
     return { data, error };
 }
@@ -33,7 +30,6 @@ export async function signup(formData: FormData) {
     };
 
     const { data, error } = await supabase.auth.signUp(credentials);
-    console.log({ data, error });
 
     return { data, error };
 }
@@ -48,7 +44,6 @@ export async function signInWithGoogle() {
     });
 
     if (error) {
-        console.log(error);
         redirect('/login');
     }
 
@@ -60,7 +55,6 @@ export async function getCurrentUser() {
     const { data, error } = await supabase.auth.getUser();
 
     if (error || !data?.user) {
-        // toast('An error occurred!', { type: 'error', autoClose: 3000 }); TODO toast on client somehow
         redirect('/login');
     }
 

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import React from 'react';
 import { Note } from '@/types/notes-types';
 import { Plus } from 'lucide-react';
-import { toast } from "sonner"
+import { toast } from 'sonner';
 
 interface CreateNoteButtonProps {
     notes: Note[];
@@ -22,14 +22,17 @@ export default function CreateNoteButton({
     return (
         <Button
             onClick={async () => {
-                const {data: createdNote, error} = await createNoteInDB('Untitled Note', '');
+                const { data: createdNote, error } = await createNoteInDB(
+                    'Untitled Note',
+                    ''
+                );
                 if (error) {
                     toast(error.message);
                 } else {
                     setNotes([createdNote, ...notes]);
                     setCurrentNote(createdNote);
                     setOriginalNote(createdNote);
-                    toast("Note created successfully");
+                    toast('Note created successfully');
                 }
             }}
         >
