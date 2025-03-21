@@ -3,24 +3,33 @@
 import { getCurrentUser } from '@/server/auth/auth-actions';
 import { createClient } from '@/lib/supabase/supabase-server';
 import { Note } from '@/types/notes-types';
-import { toast } from 'react-toastify';
 
 export async function fetchNotes() {
-    const user = await getCurrentUser();
-    const supabase = await createClient();
+    try {
+        const user = await getCurrentUser();
+        const supabase = await createClient();
 
-    const { data, error } = await supabase
-        .from('notes')
-        .select()
-        .eq('user_id', user.id)
-        .order('last_updated_at', { ascending: false });
+        const { data, error } = await supabase
+            .from('notes')
+            .select()
+            .eq('user_id', user.id)
+            .order('last_updated_at', { ascending: false });
 
-    if (error) {
-        console.log(error);
-        return null;
+        if (error) {
+            throw error;
+        }
+
+        return {
+            data: data,
+            error: null,
+        };
+        // return data as Note[]; // TODO change to proper type validation
+    } catch (error) {
+        return {
+            data: null,
+            error: Error(`Fetching notes failed: ${(error as Error).message}`),
+        };
     }
-
-    return data as Note[]; // TODO change to proper type validation
 }
 
 export async function createNote(
@@ -28,27 +37,36 @@ export async function createNote(
     noteContent: string,
     noteContentRawText?: string
 ) {
-    const user = await getCurrentUser();
-    const supabase = await createClient();
+    try {
+        const user = await getCurrentUser();
+        const supabase = await createClient();
 
-    const { data, error } = await supabase
-        .from('notes')
-        .insert([
-            {
-                note_title: noteTitle,
-                note_content: noteContent,
-                note_content_raw_text: noteContentRawText ?? '',
-                user_id: user.id,
-            },
-        ])
-        .select()
-        .single();
+        const { data, error } = await supabase
+            .from('notes')
+            .insert([
+                {
+                    note_title: noteTitle,
+                    note_content: noteContent,
+                    note_content_raw_text: noteContentRawText ?? '',
+                    user_id: user.id,
+                },
+            ])
+            .select()
+            .single();
 
-    if (error) {
-        console.log(error);
-        toast('An error occurred!', { type: 'error', autoClose: 3000 });
+        if (error) {
+            throw error;
+        }
+        return {
+            data: data as Note,
+            error: null,
+        };
+    } catch (error) {
+        return {
+            data: null,
+            error: Error(`Creating note failed: ${(error as Error).message}`),
+        };
     }
-    return data as Note;
 }
 
 export async function updateNote(
@@ -57,32 +75,59 @@ export async function updateNote(
     noteContent: string,
     noteContentRawText?: string
 ) {
-    const supabase = await createClient();
+    try {
+        const supabase = await createClient();
 
-    const { error } = await supabase
-        .from('notes')
-        .update({
-            note_title: noteTitle,
-            note_content: noteContent,
-            note_content_raw_text: noteContentRawText ?? '',
-        })
-        .eq('id', noteId)
-        .select();
-    if (error) {
-        console.log(error);
-        toast('An error occurred!', { type: 'error', autoClose: 3000 });
+        const { data, error } = await supabase
+            .from('notes')
+            .update({
+                note_title: noteTitle,
+                note_content: noteContent,
+                note_content_raw_text: noteContentRawText ?? '',
+            })
+            .eq('id', noteId)
+            .select()
+            .single();
+
+        if (error) {
+            throw error;
+        }
+
+        return {
+            data: data as Note,
+            error: null,
+        };
+    } catch (error) {
+        return {
+            data: null,
+            error: Error(`Updating note failed: ${(error as Error).message}`),
+        };
     }
-    return;
 }
 
 export async function deleteNote(noteId: string) {
-    const supabase = await createClient();
+    try {
+        const supabase = await createClient();
 
-    const { error } = await supabase.from('notes').delete().eq('id', noteId);
+        const { data, error } = await supabase
+            .from('notes')
+            .delete()
+            .eq('id', noteId)
+            .select()
+            .single();
 
-    if (error) {
-        console.log(error);
-        toast('An error occurred!', { type: 'error', autoClose: 3000 });
+        if (error) {
+            throw error;
+        }
+
+        return {
+            data: data as Note,
+            error: null,
+        };
+    } catch (error) {
+        return {
+            data: null,
+            error: Error(`Deleting note failed: ${(error as Error).message}`),
+        };
     }
-    return;
 }

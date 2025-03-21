@@ -14,6 +14,7 @@ import LogoutButton from '@/components/auth/logout';
 import React from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import CreateNoteButton from '@/components/notes/create-note-button';
+import { toast } from 'sonner'
 
 export default function NotesSidebar() {
     const { notes, setNotes, currentNote, setCurrentNote, setOriginalNote } =
@@ -79,16 +80,21 @@ export default function NotesSidebar() {
                                       size="icon"
                                       onClick={async (e) => {
                                           e.stopPropagation(); // Prevents triggering note selection
-                                          await deleteNote(note.id);
-                                          setNotes(
-                                              notes.filter(
-                                                  (prevNote) =>
-                                                      prevNote.id !== note.id
-                                              )
-                                          );
-                                          if (currentNote?.id === note.id) {
-                                              setCurrentNote(null);
-                                              setOriginalNote(null);
+                                          const {data: deletedNote, error} = await deleteNote(note.id);
+                                          if (error) {
+                                              toast(error.message);
+                                          } else {
+                                              setNotes(
+                                                  notes.filter(
+                                                      (prevNote) =>
+                                                          prevNote.id !== note.id
+                                                  )
+                                              );
+                                              if (currentNote?.id === note.id) {
+                                                  setCurrentNote(null);
+                                                  setOriginalNote(null);
+                                              }
+                                              toast(`${deletedNote!.note_title} deleted!`);
                                           }
                                       }}
                                       className="hover:text-red-500"

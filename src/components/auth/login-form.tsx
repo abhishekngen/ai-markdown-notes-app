@@ -5,9 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { login, signup } from '@/server/auth/auth-actions';
-// import SignInWithGoogleButton from "@/components/auth/google-signin";
 import React from 'react';
-import { toast } from 'react-toastify';
+import { toast } from "sonner"
 import { useRouter } from 'next/navigation';
 import SignInWithGoogleButton from '@/components/auth/google-signin';
 
@@ -26,19 +25,14 @@ export default function LoginForm({ className, ...props }: LoginFormProps) {
                         ? async (formData: FormData) => {
                               const { data, error } = await signup(formData);
                               if (error) {
-                                  toast(`An error occurred: ${error.message}`, {
-                                      type: 'error',
-                                      autoClose: 3000,
-                                  });
+                                  toast(`An error occurred: ${error.message}`);
                               } else if (!data.session) {
                                   toast(
-                                      `You have been sent an email to verify your account.`,
-                                      { type: 'success', autoClose: 3000 }
+                                      `You have been sent an email to verify your account.`
                                   );
                               } else {
                                   toast(
-                                      'You have been successfully logged in!',
-                                      { type: 'success', autoClose: 2000 }
+                                      'You have been successfully logged in!'
                                   );
                                   router.push('/');
                               }
@@ -46,14 +40,10 @@ export default function LoginForm({ className, ...props }: LoginFormProps) {
                         : async (formData: FormData) => {
                               const { error } = await login(formData);
                               if (error) {
-                                  toast(`An error occurred: ${error.message}`, {
-                                      type: 'error',
-                                      autoClose: 3000,
-                                  });
+                                  toast(`An error occurred: ${error.message}`);
                               } else {
                                   toast(
-                                      'You have been successfully logged in!',
-                                      { type: 'success', autoClose: 2000 }
+                                      'You have been successfully logged in!'
                                   );
                                   router.push('/');
                               }
@@ -131,10 +121,6 @@ export default function LoginForm({ className, ...props }: LoginFormProps) {
                     </div>
                 </div>
             </form>
-            {/*<div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">*/}
-            {/*  By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}*/}
-            {/*  and <a href="#">Privacy Policy</a>.*/}
-            {/*</div>*/}
         </div>
     );
 }

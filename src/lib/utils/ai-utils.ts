@@ -8,7 +8,7 @@ export function generateAIContext(currentNote: Note | null) {
                                 Note Title: ${currentNote.note_title}
                                 
                                 Note content: 
-                                ${currentNote.note_content ?? '(Empty)'}
+                                ${currentNote.note_content}
                                 `
         : 'Do not answer any question.';
 }

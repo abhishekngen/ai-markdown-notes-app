@@ -49,8 +49,7 @@ export async function signInWithGoogle() {
 
     if (error) {
         console.log(error);
-        toast('An error occurred!', { type: 'error', autoClose: 3000 });
-        redirect('/auth-error');
+        redirect('/login');
     }
 
     redirect(data.url);
