@@ -34,6 +34,16 @@ jobs:
             - name: Check linting
               run: pnpm lint
 
+            - name: Debug Environment Variables
+              run: |
+                echo "NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}"
+                echo "NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}"
+                echo "SUPABASE_URL=${SUPABASE_URL}"
+              env:
+                NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+                NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+                SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+
             - name: Check formatting
               run: pnpm format:check
 
