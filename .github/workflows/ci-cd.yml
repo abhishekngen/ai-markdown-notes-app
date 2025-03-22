@@ -48,13 +48,13 @@ jobs:
               run: pnpm format:check
 
             - name: Check build
-              run: pnpm build
               env:
-                  SUPABASE_URL: ${{ secrets.NEXT_SUPABASE_URL }}
-                  SUPABASE_ANON_KEY: ${{ secrets.NEXT_SUPABASE_ANON_KEY }}
-                  PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+                  NEXT_SUPABASE_URL: ${{ secrets.NEXT_SUPABASE_URL }}
+                  NEXT_SUPABASE_ANON_KEY: ${{ secrets.NEXT_SUPABASE_ANON_KEY }}
+                  NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
                   SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
                   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+              run: pnpm build
 
     deploy:
         needs: build-test-lint
