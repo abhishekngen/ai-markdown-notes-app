@@ -87,4 +87,4 @@ jobs:
               run: vercel link --token=${{ secrets.VERCEL_TOKEN }} --yes
 
             - name: Deploy to Vercel
-              run: vercel deploy --token=${{ secrets.VERCEL_TOKEN }}
+              run: vercel deploy --prod --confirm --token=${{ secrets.VERCEL_TOKEN }}
