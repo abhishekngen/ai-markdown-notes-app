@@ -42,7 +42,7 @@ export default function NotesSidebar() {
                     setCurrentNote={setCurrentNote}
                     setOriginalNote={setOriginalNote}
                 />
-                {notes
+                {notes.length > 0
                     ? notes.map((note) => {
                           return (
                               <div
