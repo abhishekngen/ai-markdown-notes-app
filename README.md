@@ -7,6 +7,8 @@ Tech Stack:
 - Supabase (Postgres + Auth)
 - Zustand (State management)
 
+RLS policies are used to prevent unauthenticated client-side access to the DB, and server actions are utilised for OpenAI API access.
+
 ## https://ai-markdown-notes-app.vercel.app/
 
 ![image](https://github.com/user-attachments/assets/42435d8f-d41e-4e81-b901-058f625e2dfb)
