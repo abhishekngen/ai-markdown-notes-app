@@ -1,6 +1,7 @@
 AI Markdown Notes Editor that lets you write and edit notes in markdown. Notes auto-save and get stored in Supabase (Postges) database. Sign in with Google OAuth or email and password via Supabase Auth, and talk to your notes with OpenAI API integration.
 
 Tech Stack:
+
 - Next.js (Typescript)
 - TailwindCSS
 - ShadCN
