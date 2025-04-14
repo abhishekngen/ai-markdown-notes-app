@@ -1,5 +1,4 @@
 'use server';
-
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
 
 export async function chunkNote(noteContent: string) {

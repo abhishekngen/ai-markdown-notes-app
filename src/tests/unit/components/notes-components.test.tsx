@@ -59,6 +59,9 @@ vi.mock('@/components/ai/chat', () => ({
 }));
 vi.mock('@ai-sdk/react');
 vi.mock('@/server/db/notes-queries');
+vi.mock('@/server/vector-operations/text-chunking');
+vi.mock('@/server/vector-operations/text-embeddings');
+vi.mock('openai');
 
 // TODO abstract into another function probably
 function getBoundingClientRect() {
