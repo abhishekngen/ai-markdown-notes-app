@@ -13,11 +13,13 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Tiptap from '@/components/notes/tiptap/tiptap';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { updateNote as saveNoteInDB } from '@/server/db/notes-queries';
+import { updateNote as saveNoteInDB, upsertNoteChunks } from '@/server/db/notes-queries';
 // @ts-expect-error html is not typed in package
 import { html as beautifyHtml } from 'js-beautify';
 import { useShallow } from 'zustand/react/shallow';
 import CreateNoteButton from '@/components/notes/create-note-button';
+import { chunkNote } from '@/server/vector-operations/text-chunking';
+import { generateTextEmbedding } from '@/server/vector-operations/text-embeddings';
 
 export default function NotesEditor() {
     const {
@@ -61,8 +63,20 @@ export default function NotesEditor() {
                 currentNote.note_content,
                 currentNote.note_content_raw_text
             );
+
+            await saveNoteEmbeddings();
         }
     };
+
+    const saveNoteEmbeddings = async () => {
+        if (currentNote) {
+            const chunks = await chunkNote(currentNote.note_content_raw_text!);
+            const embeddings = await Promise.all(
+                chunks.map((chunk) => generateTextEmbedding(chunk))
+            );
+            await upsertNoteChunks(currentNote.id, chunks, embeddings);
+        }
+    }
 
     const [isSaving, setIsSaving] = useState(false);
 
@@ -84,7 +98,7 @@ export default function NotesEditor() {
                 await saveNote();
                 setIsSaving(false);
             }
-        }, 300);
+        }, 250);
 
         return () => {
             clearTimeout(saveStateTimeout);

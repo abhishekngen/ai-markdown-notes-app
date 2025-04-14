@@ -131,3 +131,67 @@ export async function deleteNote(noteId: string) {
         };
     }
 }
+
+export async function upsertNoteChunks(noteId: string, noteChunks: string[], noteChunkEmbeddings: number[][]) {
+    try {
+        const supabase = await createClient();
+
+        const { error: deleteError } = await supabase
+            .from('note_chunks')
+            .delete()
+            .eq('note_id', noteId)
+
+        if (deleteError) {
+            throw deleteError;
+        }
+
+        const chunkData = noteChunks.map((chunk, index) => ({
+            note_id: noteId,
+            note_chunk: chunk,
+            embedding: noteChunkEmbeddings[index]
+        }));
+
+        const { data, error: insertError } = await supabase
+            .from('note_chunks')
+            .insert(chunkData)
+
+        if (insertError) {
+            throw insertError;
+        }
+
+        return {
+            data, insertError
+        };
+    } catch (error) {
+        return {
+            data: null,
+            error: Error(`Upserting note chunks failed: ${(error as Error).message}`),
+        };
+    }
+}
+
+export async function noteChunksRagSearch(queryEmbedding: number[], numberOfMatches: number) {
+    try {
+        const supabase = await createClient();
+
+        const { data, error } = await supabase.rpc('match_note_chunks', {
+            query_embedding: queryEmbedding,
+            match_threshold: 0.1,
+            match_count: 5
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        return {
+            data: data,
+            error: null,
+        };
+    } catch (error) {
+        return {
+            data: null,
+            error: Error(`RAG search failed: ${(error as Error).message}`),
+        };
+    }
+}
