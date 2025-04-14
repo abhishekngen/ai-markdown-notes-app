@@ -9,11 +9,18 @@ export async function POST(req: Request) {
 
     const lastUserMessage = messages[messages.length - 1].content;
 
-    const lastUserMessageEmbedding = await generateTextEmbedding(lastUserMessage);
+    const lastUserMessageEmbedding =
+        await generateTextEmbedding(lastUserMessage);
 
-    const ragSearchResponse = await noteChunksRagSearch(lastUserMessageEmbedding, 5);
+    const ragSearchResponse = await noteChunksRagSearch(
+        lastUserMessageEmbedding,
+        5
+    );
 
-    const relevantChunks = ragSearchResponse.data.map((response: any) => response.note_chunk);
+    const relevantChunks = ragSearchResponse.data.map(
+        // @ts-expect-error response is not typed
+        (response) => response.note_chunk
+    );
 
     const augmentedText = `The following are relevant other note snippets the user has written: ${relevantChunks.join(', ')}. You can use these in answering the user's question, which may not just pertain to the current note.`;
     const lastUserMessageWithAugmentedText = `${lastUserMessage} ${augmentedText}`;
@@ -24,10 +31,19 @@ export async function POST(req: Request) {
         messages,
         tools: {
             weather: tool({
-                description: 'Get the current weather for a given latitude/longitude pair.',
+                description:
+                    'Get the current weather for a given latitude/longitude pair.',
                 parameters: z.object({
-                    latitude: z.number().describe('The latitude of the location to get the weather for.'),
-                    longitude: z.number().describe('The longitude of the location to get the weather for.'),
+                    latitude: z
+                        .number()
+                        .describe(
+                            'The latitude of the location to get the weather for.'
+                        ),
+                    longitude: z
+                        .number()
+                        .describe(
+                            'The longitude of the location to get the weather for.'
+                        ),
                 }),
                 execute: async ({ latitude, longitude }) => {
                     const response = await fetch(
@@ -38,10 +54,10 @@ export async function POST(req: Request) {
                         temperature: data.current.temperature_2m,
                         unit: data.current_units.temperature_2m,
                     };
-                }
-            })
+                },
+            }),
         },
-        maxSteps: 2
+        maxSteps: 2,
     });
 
     return result.toDataStreamResponse();

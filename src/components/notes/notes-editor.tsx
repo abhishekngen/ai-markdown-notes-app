@@ -13,7 +13,10 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Tiptap from '@/components/notes/tiptap/tiptap';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { updateNote as saveNoteInDB, upsertNoteChunks } from '@/server/db/notes-queries';
+import {
+    updateNote as saveNoteInDB,
+    upsertNoteChunks,
+} from '@/server/db/notes-queries';
 // @ts-expect-error html is not typed in package
 import { html as beautifyHtml } from 'js-beautify';
 import { useShallow } from 'zustand/react/shallow';
@@ -76,7 +79,7 @@ export default function NotesEditor() {
             );
             await upsertNoteChunks(currentNote.id, chunks, embeddings);
         }
-    }
+    };
 
     const [isSaving, setIsSaving] = useState(false);
 
