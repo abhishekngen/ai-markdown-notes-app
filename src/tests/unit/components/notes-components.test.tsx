@@ -5,7 +5,7 @@ import NotesEditor from '@/components/notes/notes-editor';
 import Chat from '@/components/ai/chat';
 import { makeMockNote } from '@/tests/utils/mock-note';
 import userEvent from '@testing-library/user-event';
-import { updateNote as saveNoteInDB } from '@/server/db/notes-queries';
+import { updateNote as saveNoteInDB, upsertNoteChunks } from '@/server/db/notes-queries';
 import React from 'react';
 
 vi.mock('@/components/notes/notes-editor', () => ({
@@ -59,7 +59,9 @@ vi.mock('@/components/ai/chat', () => ({
 }));
 vi.mock('@ai-sdk/react');
 vi.mock('@/server/db/notes-queries');
-vi.mock('@/server/vector-operations/text-chunking');
+vi.mock('@/server/vector-operations/text-chunking', () => ({
+    chunkNote: vi.fn(() => Promise.resolve([])),
+}));
 vi.mock('@/server/vector-operations/text-embeddings');
 vi.mock('openai');
 
@@ -156,6 +158,7 @@ describe('notes editor tests', () => {
         await waitFor(
             () => {
                 expect(saveNoteInDB).toHaveBeenCalled();
+                expect(upsertNoteChunks).toHaveBeenCalled();
             },
             { timeout: 500 }
         );
