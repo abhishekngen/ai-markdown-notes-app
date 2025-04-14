@@ -5,7 +5,10 @@ import NotesEditor from '@/components/notes/notes-editor';
 import Chat from '@/components/ai/chat';
 import { makeMockNote } from '@/tests/utils/mock-note';
 import userEvent from '@testing-library/user-event';
-import { updateNote as saveNoteInDB, upsertNoteChunks } from '@/server/db/notes-queries';
+import {
+    updateNote as saveNoteInDB,
+    upsertNoteChunks,
+} from '@/server/db/notes-queries';
 import React from 'react';
 
 vi.mock('@/components/notes/notes-editor', () => ({
