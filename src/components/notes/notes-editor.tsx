@@ -53,6 +53,7 @@ export default function NotesEditor() {
                             note_content: currentNote.note_content,
                             note_content_raw_text:
                                 currentNote.note_content_raw_text,
+                            note_title: currentNote.note_title,
                         };
                     } else {
                         return note;
